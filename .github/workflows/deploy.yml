@@ -37,6 +37,7 @@ jobs:
       - name: Fix GitHub Pages asset paths
         run: |
           perl -0pi -e 's#(href|src)="/assets/#$1="/2026-05-first-open-slide/assets/#g' dist/index.html
+          perl -0pi -e 's#(["`])/(s|themes|assets)(?=/|["`])#$1/2026-05-first-open-slide/$2#g; s#path:"/"#path:"/2026-05-first-open-slide/"#g; s#to:"/"#to:"/2026-05-first-open-slide/"#g' dist/assets/*.js
           cp dist/index.html dist/404.html
           mkdir -p dist/s/getting-started
           cp dist/index.html dist/s/getting-started/index.html
