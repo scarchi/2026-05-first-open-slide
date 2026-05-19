@@ -38,6 +38,8 @@ jobs:
         run: |
           perl -0pi -e 's#(href|src)="/assets/#$1="/2026-05-first-open-slide/assets/#g' dist/index.html
           cp dist/index.html dist/404.html
+          mkdir -p dist/s/getting-started
+          cp dist/index.html dist/s/getting-started/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
