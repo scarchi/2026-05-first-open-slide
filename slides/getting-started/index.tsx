@@ -12,8 +12,8 @@ export const design: DesignSystem = {
     body: '"Inter", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif',
   },
   typeScale: {
-    hero: 118,
-    body: 31,
+    hero: 108,
+    body: 28,
   },
   radius: 8,
 };
@@ -30,6 +30,7 @@ const colors = {
   plum: '#5c405e',
   line: '#d7bd79',
   muted: '#66706d',
+  shell: '#eadfca',
 };
 
 const page: CSSProperties = {
@@ -44,42 +45,45 @@ const page: CSSProperties = {
   letterSpacing: 0,
 };
 
-const title: CSSProperties = {
+const h1: CSSProperties = {
   margin: 0,
   fontFamily: 'var(--osd-font-display)',
-  fontSize: 88,
-  lineHeight: 1.04,
+  fontSize: 108,
+  lineHeight: 0.98,
+  fontWeight: 800,
+  letterSpacing: 0,
+};
+
+const h2: CSSProperties = {
+  margin: 0,
+  fontFamily: 'var(--osd-font-display)',
+  fontSize: 78,
+  lineHeight: 1.03,
   fontWeight: 780,
   letterSpacing: 0,
 };
 
-const heroTitle: CSSProperties = {
-  ...title,
-  fontSize: 120,
-  lineHeight: 0.98,
-};
-
 const body: CSSProperties = {
   margin: 0,
-  fontSize: 30,
-  lineHeight: 1.44,
+  fontSize: 28,
+  lineHeight: 1.42,
   color: colors.muted,
 };
 
-const label: CSSProperties = {
-  fontSize: 22,
-  fontWeight: 820,
+const eyebrow: CSSProperties = {
+  fontSize: 21,
+  fontWeight: 840,
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
   color: colors.rose,
 };
 
-const ornamentCss = `
-  @keyframes os-bloom {
-    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+const css = `
+  @keyframes bloom {
+    from { opacity: 0; transform: translateY(12px) scale(0.99); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
-  .mucha-slide * { box-sizing: border-box; }
+  .deck * { box-sizing: border-box; }
 `;
 
 const DecoCircle = ({ x, y, size, color }: { x: number; y: number; size: number; color: string }) => (
@@ -92,7 +96,7 @@ const DecoCircle = ({ x, y, size, color }: { x: number; y: number; size: number;
       height: size,
       borderRadius: '50%',
       border: `3px solid ${color}`,
-      opacity: 0.5,
+      opacity: 0.48,
     }}
   />
 );
@@ -101,8 +105,8 @@ const Vine = ({ side }: { side: 'left' | 'right' }) => (
   <div
     style={{
       position: 'absolute',
-      top: 102,
-      bottom: 102,
+      top: 104,
+      bottom: 104,
       [side]: 54,
       width: 34,
       borderLeft: side === 'left' ? `3px solid ${colors.gold}` : undefined,
@@ -114,10 +118,10 @@ const Vine = ({ side }: { side: 'left' | 'right' }) => (
         key={i}
         style={{
           position: 'absolute',
-          top: 42 + i * 118,
+          top: 38 + i * 118,
           [side === 'left' ? 'left' : 'right']: -12,
           width: 42,
-          height: 72,
+          height: 70,
           border: `3px solid ${i % 2 ? colors.sage : colors.rose}`,
           borderRadius: side === 'left' ? '70% 20% 70% 20%' : '20% 70% 20% 70%',
           transform: `rotate(${side === 'left' ? -24 : 24}deg)`,
@@ -131,7 +135,7 @@ const Vine = ({ side }: { side: 'left' | 'right' }) => (
 const Frame = ({
   children,
   n,
-  section = 'From chat to published deck',
+  section = 'open-slide + GitHub operating model',
   dark = false,
 }: {
   children: ReactNode;
@@ -140,16 +144,16 @@ const Frame = ({
   dark?: boolean;
 }) => (
   <section
-    className="mucha-slide"
+    className="deck"
     style={{
       ...page,
       background: dark ? colors.deepTeal : colors.parchment,
       color: dark ? colors.paper : colors.ink,
     }}
   >
-    <style>{ornamentCss}</style>
-    <DecoCircle x={-120} y={-180} size={420} color={dark ? colors.gold : colors.teal} />
-    <DecoCircle x={1590} y={780} size={420} color={dark ? colors.rose : colors.gold} />
+    <style>{css}</style>
+    <DecoCircle x={-128} y={-188} size={430} color={dark ? colors.gold : colors.teal} />
+    <DecoCircle x={1580} y={780} size={430} color={dark ? colors.rose : colors.gold} />
     <Vine side="left" />
     <Vine side="right" />
     <div style={{ position: 'absolute', inset: 52, border: `4px double ${colors.gold}` }} />
@@ -157,7 +161,7 @@ const Frame = ({
       style={{
         position: 'absolute',
         inset: '92px 116px 92px 116px',
-        animation: 'os-bloom 520ms ease-out both',
+        animation: 'bloom 500ms ease-out both',
       }}
     >
       {children}
@@ -186,7 +190,7 @@ const Panel = ({
   style,
 }: {
   children: ReactNode;
-  tone?: 'light' | 'teal' | 'rose' | 'ink';
+  tone?: 'light' | 'teal' | 'rose' | 'ink' | 'shell';
   style?: CSSProperties;
 }) => {
   const palette =
@@ -196,7 +200,9 @@ const Panel = ({
         ? { bg: colors.rose, fg: colors.paper, border: colors.gold }
         : tone === 'ink'
           ? { bg: colors.ink, fg: colors.paper, border: colors.gold }
-          : { bg: colors.paper, fg: colors.ink, border: colors.line };
+          : tone === 'shell'
+            ? { bg: colors.shell, fg: colors.ink, border: colors.line }
+            : { bg: colors.paper, fg: colors.ink, border: colors.line };
 
   return (
     <div
@@ -204,8 +210,8 @@ const Panel = ({
         background: palette.bg,
         color: palette.fg,
         border: `2px solid ${palette.border}`,
-        padding: 34,
-        boxShadow: '10px 10px 0 rgba(32,33,38,0.08)',
+        padding: 30,
+        boxShadow: '9px 9px 0 rgba(32,33,38,0.08)',
         ...style,
       }}
     >
@@ -215,25 +221,25 @@ const Panel = ({
 };
 
 const Step = ({ num, head, copy }: { num: string; head: string; copy: string }) => (
-  <div style={{ display: 'grid', gridTemplateColumns: '86px 1fr', gap: 24, alignItems: 'start' }}>
+  <div style={{ display: 'grid', gridTemplateColumns: '78px 1fr', gap: 22, alignItems: 'start' }}>
     <div
       style={{
-        width: 68,
-        height: 68,
+        width: 62,
+        height: 62,
         borderRadius: '50%',
         display: 'grid',
         placeItems: 'center',
         background: colors.gold,
         color: colors.ink,
-        fontSize: 28,
-        fontWeight: 860,
+        fontSize: 25,
+        fontWeight: 880,
       }}
     >
       {num}
     </div>
     <div>
-      <div style={{ fontSize: 34, fontWeight: 820, lineHeight: 1.1 }}>{head}</div>
-      <p style={{ ...body, fontSize: 25, marginTop: 10 }}>{copy}</p>
+      <div style={{ fontSize: 32, fontWeight: 840, lineHeight: 1.12 }}>{head}</div>
+      <p style={{ ...body, fontSize: 24, marginTop: 8 }}>{copy}</p>
     </div>
   </div>
 );
@@ -243,13 +249,13 @@ const Pill = ({ children, color = colors.teal }: { children: ReactNode; color?: 
     style={{
       display: 'inline-flex',
       alignItems: 'center',
-      minHeight: 44,
-      padding: '5px 17px',
+      minHeight: 42,
+      padding: '5px 16px',
       border: `2px solid ${color}`,
       color,
       background: colors.paper,
-      fontSize: 23,
-      fontWeight: 780,
+      fontSize: 22,
+      fontWeight: 800,
       whiteSpace: 'nowrap',
     }}
   >
@@ -257,215 +263,385 @@ const Pill = ({ children, color = colors.teal }: { children: ReactNode; color?: 
   </span>
 );
 
+const CodeBlock = ({ children }: { children: ReactNode }) => (
+  <Panel tone="ink" style={{ fontFamily: 'monospace', fontSize: 25, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
+    {children}
+  </Panel>
+);
+
 const Cover: Page = () => (
-  <Frame n="01 / 10" section="Case study">
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 470px', gap: 72, alignItems: 'center', height: '100%' }}>
+  <Frame n="01 / 20" section="For IT sharing">
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 460px', gap: 70, alignItems: 'center', height: '100%' }}>
       <div>
-        <div style={label}>Conversation recap</div>
-        <h1 style={{ ...heroTitle, marginTop: 34 }}>小白如何請 Codex 教學做簡報</h1>
-        <p style={{ ...body, marginTop: 42, maxWidth: 980 }}>
-          這不是抽象教學，而是我們剛剛實際走過的一次流程：安裝環境、踩坑、修正架構、接上 GitHub，最後發布成網頁簡報。
+        <div style={eyebrow}>Practical case study</div>
+        <h1 style={{ ...h1, marginTop: 32 }}>用 open-slide 與 GitHub 建立簡報生產線</h1>
+        <p style={{ ...body, maxWidth: 1000, marginTop: 40 }}>
+          從小白提問到可發布簡報：環境、建檔、版本管理、部署，以及這次實作踩到的坑。
         </p>
-        <div style={{ display: 'flex', gap: 16, marginTop: 46, flexWrap: 'wrap' }}>
-          <Pill>Node.js</Pill>
-          <Pill color={colors.rose}>open-slide</Pill>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 42 }}>
+          <Pill>open-slide</Pill>
+          <Pill color={colors.rose}>Codex</Pill>
           <Pill color={colors.plum}>GitHub Pages</Pill>
         </div>
       </div>
-      <Panel tone="teal" style={{ minHeight: 650, display: 'grid', placeItems: 'center', textAlign: 'center' }}>
+      <Panel tone="teal" style={{ minHeight: 640, display: 'grid', placeItems: 'center', textAlign: 'center' }}>
         <div>
-          <div style={{ fontSize: 150, fontWeight: 900, lineHeight: 1 }}>10</div>
-          <div style={{ width: 260, height: 260, margin: '26px auto', borderRadius: '50%', border: `6px double ${colors.gold}` }} />
-          <div style={{ fontSize: 34, fontWeight: 760 }}>steps to publish</div>
+          <div style={{ fontSize: 136, fontWeight: 900 }}>20</div>
+          <div style={{ width: 250, height: 250, margin: '24px auto', borderRadius: '50%', border: `6px double ${colors.gold}` }} />
+          <div style={{ fontSize: 32, fontWeight: 780 }}>slides for IT</div>
         </div>
       </Panel>
     </div>
   </Frame>
 );
 
-const StartPoint: Page = () => (
-  <Frame n="02 / 10">
-    <div style={{ display: 'grid', gridTemplateColumns: '0.96fr 1.04fr', gap: 56, height: '100%', alignItems: 'center' }}>
-      <div>
-        <div style={label}>The first question</div>
-        <h2 style={{ ...title, marginTop: 30 }}>一開始不是寫程式，是先弄懂「怎麼接上」。</h2>
-        <p style={{ ...body, marginTop: 34 }}>
-          我們先把 open-slide、GitHub、GitHub Pages 的角色拆開，避免把工具、版本庫和發布服務混在一起。
-        </p>
-      </div>
-      <div style={{ display: 'grid', gap: 22 }}>
-        <Step num="1" head="open-slide" copy="負責本機預覽與把 React 投影片 build 成靜態網站。" />
-        <Step num="2" head="GitHub" copy="負責保存版本、讓每次改動可以追蹤和回復。" />
-        <Step num="3" head="Pages / Vercel / Netlify" copy="負責把 build 出來的 dist 變成線上網址。" />
-      </div>
-    </div>
-  </Frame>
-);
-
-const FolderPlan: Page = () => (
-  <Frame n="03 / 10">
-    <div style={label}>Workspace design</div>
-    <h2 style={{ ...title, marginTop: 28 }}>我們先設計資料夾，再開始建立專案。</h2>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, marginTop: 70 }}>
-      <Panel style={{ minHeight: 440 }}>
-        <div style={{ fontSize: 42, fontWeight: 850, color: colors.teal }}>原本想法</div>
-        <p style={{ ...body, marginTop: 26 }}>
-          把整個 presentations 放在 T 槽 Obsidian 裡，讓簡報和筆記一起管理。
-        </p>
-        <div style={{ marginTop: 34, fontFamily: 'monospace', fontSize: 24, lineHeight: 1.5 }}>
-          T:\●Obsidian\4.輸出工作區\簡報
-        </div>
-      </Panel>
-      <Panel tone="teal" style={{ minHeight: 440 }}>
-        <div style={{ fontSize: 42, fontWeight: 850 }}>最後架構</div>
-        <p style={{ ...body, color: '#e8dfc8', marginTop: 26 }}>
-          C 槽 Codex 放開發專案，T 槽 Obsidian 放 PDF、連結、筆記和封存輸出。
-        </p>
-        <div style={{ marginTop: 34, fontFamily: 'monospace', fontSize: 24, lineHeight: 1.5 }}>
-          C:\Documents\Codex\open-slide-workspace
-        </div>
-      </Panel>
-    </div>
-  </Frame>
-);
-
-const EnvironmentFix: Page = () => (
-  <Frame n="04 / 10">
-    <div style={{ display: 'grid', gridTemplateColumns: '0.92fr 1.08fr', gap: 58, alignItems: 'center', height: '100%' }}>
-      <div>
-        <div style={label}>Environment check</div>
-        <h2 style={{ ...title, marginTop: 30 }}>第一個關卡：Node、npm、Git。</h2>
-        <p style={{ ...body, marginTop: 34 }}>
-          Git 補裝完成，Node 從 v18 升到 v24，npm 在 PowerShell 被 Execution Policy 擋住，所以改用 npm.cmd。
-        </p>
-      </div>
-      <Panel tone="ink" style={{ fontFamily: 'monospace', fontSize: 30, lineHeight: 1.75 }}>
-        <span style={{ color: colors.gold }}>&gt;</span> git version 2.54.0.windows.1<br />
-        <span style={{ color: colors.gold }}>&gt;</span> node -v<br />
-        v24.15.0<br />
-        <span style={{ color: colors.gold }}>&gt;</span> npm.cmd -v<br />
-        11.12.1
-      </Panel>
-    </div>
-  </Frame>
-);
-
-const FirstPitfall: Page = () => (
-  <Frame n="05 / 10">
-    <div style={label}>The useful failure</div>
-    <h2 style={{ ...title, marginTop: 28 }}>我們真的在 T 槽踩到 open-slide 的坑。</h2>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginTop: 70 }}>
-      <Panel tone="rose" style={{ minHeight: 430 }}>
-        <div style={{ fontSize: 42, fontWeight: 850 }}>發生什麼</div>
-        <p style={{ ...body, color: '#f4ead5', marginTop: 26 }}>
-          npm install 卡在 esbuild.exe，Git 又回報 dubious ownership。T 槽其實是 RaiDrive / 網路掛載磁碟。
-        </p>
-      </Panel>
-      <Panel style={{ minHeight: 430 }}>
-        <div style={{ fontSize: 42, fontWeight: 850, color: colors.teal }}>學到什麼</div>
-        <p style={{ ...body, marginTop: 26 }}>
-          JS 專案要把 node_modules 放在本機檔案系統。同步碟或網路碟適合放輸出，不適合當開發根目錄。
-        </p>
-      </Panel>
-    </div>
-  </Frame>
-);
-
-const WorkingProject: Page = () => (
-  <Frame n="06 / 10" dark>
-    <div style={{ display: 'grid', gridTemplateColumns: '0.95fr 1.05fr', gap: 56, alignItems: 'center', height: '100%' }}>
-      <div>
-        <div style={{ ...label, color: colors.gold }}>Working path</div>
-        <h2 style={{ ...title, color: colors.paper, marginTop: 30 }}>改到 C 槽 Codex 工作區後，一次成功。</h2>
-        <p style={{ ...body, color: '#d8d2bd', marginTop: 34 }}>
-          專案成功啟動，open-slide dev server 跑在 localhost:5173，這就是之後每天編輯和預覽的入口。
-        </p>
-      </div>
-      <Panel tone="ink" style={{ background: '#11171a', fontFamily: 'monospace', fontSize: 29, lineHeight: 1.65 }}>
-        C:\Users\scarc\Documents\Codex\<br />
-        open-slide-workspace\decks\<br />
-        2026-05-first-open-slide<br /><br />
-        <span style={{ color: colors.gold }}>$</span> npm.cmd run dev<br />
-        Local: http://localhost:5173/
-      </Panel>
-    </div>
-  </Frame>
-);
-
-const GitHubFlow: Page = () => (
-  <Frame n="07 / 10">
-    <div style={label}>GitHub connection</div>
-    <h2 style={{ ...title, marginTop: 28 }}>接上 GitHub 的本質是把本機資料夾和 repo 綁起來。</h2>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 26, marginTop: 72 }}>
+const Agenda: Page = () => (
+  <Frame n="02 / 20">
+    <div style={eyebrow}>What this deck covers</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>先把流程看成系統，不是單一工具。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginTop: 66 }}>
       {[
-        ['Commit', '把目前檔案記錄成一個版本。'],
-        ['Remote', '把本機 repo 指向 GitHub repo。'],
-        ['Push', '把版本上傳到 GitHub，觸發後續發布。'],
-      ].map(([head, copy], index) => (
-        <Panel key={head} tone={index === 1 ? 'teal' : 'light'} style={{ minHeight: 360 }}>
-          <div style={{ fontSize: 30, color: index === 1 ? colors.gold : colors.rose, fontWeight: 850 }}>0{index + 1}</div>
-          <div style={{ fontSize: 42, fontWeight: 850, marginTop: 26 }}>{head}</div>
-          <p style={{ ...body, color: index === 1 ? '#e8dfc8' : colors.muted, marginTop: 24 }}>{copy}</p>
+        ['01', '概念', 'open-slide、Codex、GitHub 各自負責什麼。'],
+        ['02', '建檔', '專案結構、資料夾策略、母版用途。'],
+        ['03', '管理', '版本、發布、Public / Private 決策。'],
+        ['04', '案例', '這次問答中遇到的錯誤與修正方式。'],
+      ].map(([num, head, copy]) => (
+        <Panel key={num} style={{ minHeight: 360 }}>
+          <div style={{ fontSize: 28, fontWeight: 900, color: colors.rose }}>{num}</div>
+          <div style={{ fontSize: 38, fontWeight: 840, marginTop: 28 }}>{head}</div>
+          <p style={{ ...body, fontSize: 25, marginTop: 18 }}>{copy}</p>
         </Panel>
       ))}
     </div>
   </Frame>
 );
 
-const Publish: Page = () => (
-  <Frame n="08 / 10">
-    <div style={{ display: 'grid', gridTemplateColumns: '0.92fr 1.08fr', gap: 56, alignItems: 'center', height: '100%' }}>
+const WhyChange: Page = () => (
+  <Frame n="03 / 20">
+    <div style={{ display: 'grid', gridTemplateColumns: '0.95fr 1.05fr', gap: 56, height: '100%', alignItems: 'center' }}>
       <div>
-        <div style={label}>Publish moment</div>
-        <h2 style={{ ...title, marginTop: 30 }}>GitHub Pages 一開始失敗，原因不是 build。</h2>
+        <div style={eyebrow}>Why change the workflow</div>
+        <h2 style={{ ...h2, marginTop: 30 }}>IT 團隊需要的不只是漂亮投影片。</h2>
         <p style={{ ...body, marginTop: 34 }}>
-          repo 原本是 Private，免費 GitHub Pages 不能發布 private repo。改 Public 並選 GitHub Actions 後，重新觸發部署就成功。
+          簡報常常承載架構說明、教育訓練、決策提案。若能用 repo 管理，就能 review、追版本、重複部署。
         </p>
       </div>
       <div style={{ display: 'grid', gap: 22 }}>
-        <Step num="1" head="Build success" copy="npm run build 能產生 dist，代表 open-slide 沒問題。" />
-        <Step num="2" head="Deploy failed" copy="Pages 還沒啟用或 repo visibility 不符合條件。" />
-        <Step num="3" head="HTTP 200" copy="最後公開網址成功回應，線上簡報正式成立。" />
+        <Step num="1" head="可追蹤" copy="每次改動都有 commit，可回溯原因與責任。" />
+        <Step num="2" head="可重建" copy="只要有 package.json 與原始碼，就能在新環境重新建置。" />
+        <Step num="3" head="可自動化" copy="push 後由 Actions build，減少手動上傳與版本混亂。" />
       </div>
     </div>
   </Frame>
 );
 
-const Template: Page = () => (
-  <Frame n="09 / 10">
-    <div style={label}>Reusable template</div>
-    <h2 style={{ ...title, marginTop: 28 }}>環境跑通後，我們做了一個 deck-template。</h2>
+const Roles: Page = () => (
+  <Frame n="04 / 20">
+    <div style={eyebrow}>Tool roles</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>四個角色，各司其職。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 26, marginTop: 58 }}>
+      {[
+        ['Codex', '把自然語言需求轉成檔案修改，負責寫 slide code、修錯、執行驗證。'],
+        ['open-slide', '用 React component 描述投影片，提供本機預覽與 build。'],
+        ['Git', '在本機記錄版本，讓每次改動可以 commit、diff、rollback。'],
+        ['GitHub', '雲端版本庫與部署觸發點，配合 Pages / Actions 發布。'],
+      ].map(([head, copy], i) => (
+        <Panel key={head} tone={i === 1 ? 'teal' : i === 3 ? 'rose' : 'light'} style={{ minHeight: 215 }}>
+          <div style={{ fontSize: 38, fontWeight: 860 }}>{head}</div>
+          <p style={{ ...body, color: i === 1 ? '#e8dfc8' : i === 3 ? '#f4ead5' : colors.muted, fontSize: 25, marginTop: 14 }}>{copy}</p>
+        </Panel>
+      ))}
+    </div>
+  </Frame>
+);
+
+const SystemMap: Page = () => (
+  <Frame n="05 / 20" dark>
+    <div style={eyebrow}>System map</div>
+    <h2 style={{ ...h2, color: colors.paper, marginTop: 28 }}>一條簡報從本機流到網路。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr 80px 1fr', gap: 16, marginTop: 80, alignItems: 'center' }}>
+      {[
+        ['本機工作區', '編輯 slides、跑 localhost'],
+        ['GitHub repo', '保存版本、觸發 workflow'],
+        ['發布網站', 'GitHub Pages / Vercel / Netlify'],
+      ].map(([head, copy], i) => (
+        <>
+          <Panel key={head} tone={i === 1 ? 'rose' : 'teal'} style={{ minHeight: 330 }}>
+            <div style={{ fontSize: 40, fontWeight: 860 }}>{head}</div>
+            <p style={{ ...body, color: i === 1 ? '#f4ead5' : '#e8dfc8', marginTop: 26 }}>{copy}</p>
+          </Panel>
+          {i < 2 ? <div key={`${head}-arrow`} style={{ fontSize: 56, color: colors.gold, textAlign: 'center' }}>→</div> : null}
+        </>
+      ))}
+    </div>
+  </Frame>
+);
+
+const LocalWorkspace: Page = () => (
+  <Frame n="06 / 20">
+    <div style={eyebrow}>Local file strategy</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>開發專案放本機，輸出整理放 Obsidian。</h2>
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginTop: 70 }}>
-      <Panel style={{ minHeight: 430 }}>
-        <div style={{ fontSize: 42, fontWeight: 850, color: colors.teal }}>母版的用途</div>
-        <p style={{ ...body, marginTop: 26 }}>
-          不必每次從官方範例開始拆。複製母版、改主題、安裝依賴、開 dev server，就能開始做新簡報。
-        </p>
+      <Panel tone="teal" style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 40, fontWeight: 860 }}>C 槽 Codex 工作區</div>
+        <p style={{ ...body, color: '#e8dfc8', marginTop: 24 }}>放 open-slide 專案、node_modules、Git repo，確保工具鏈能正常跑。</p>
+        <div style={{ marginTop: 32, fontFamily: 'monospace', fontSize: 22 }}>C:\Users\scarc\Documents\Codex\open-slide-workspace</div>
       </Panel>
-      <Panel tone="ink" style={{ minHeight: 430, fontFamily: 'monospace', fontSize: 26, lineHeight: 1.55 }}>
-        Copy-Item -Recurse deck-template decks\new-deck<br />
-        cd decks\new-deck<br />
-        npm.cmd install<br />
-        npm.cmd run dev
+      <Panel style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 40, fontWeight: 860, color: colors.rose }}>T 槽 Obsidian</div>
+        <p style={{ ...body, marginTop: 24 }}>放 PDF、網址、截圖、會議筆記、封存檔。不要放 node_modules 當開發根目錄。</p>
+        <div style={{ marginTop: 32, fontFamily: 'monospace', fontSize: 22 }}>T:\●Obsidian\4.輸出工作區\簡報</div>
       </Panel>
     </div>
   </Frame>
 );
 
-const Closing: Page = () => (
-  <Frame n="10 / 10" dark>
+const FolderStructure: Page = () => (
+  <Frame n="07 / 20">
+    <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 58, height: '100%', alignItems: 'center' }}>
+      <div>
+        <div style={eyebrow}>Folder structure</div>
+        <h2 style={{ ...h2, marginTop: 30 }}>先規劃分類，才不會每份簡報長成一次性專案。</h2>
+        <p style={{ ...body, marginTop: 34 }}>正式案、實驗案、母版、輸出封存，要從第一天就分開。</p>
+      </div>
+      <CodeBlock>{`open-slide-workspace
+├── deck-template
+├── decks
+│   └── 2026-05-first-open-slide
+├── experiments
+├── assets
+└── archive`}</CodeBlock>
+    </div>
+  </Frame>
+);
+
+const ProjectAnatomy: Page = () => (
+  <Frame n="08 / 20">
+    <div style={eyebrow}>open-slide project anatomy</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>每份簡報其實是一個小型前端專案。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, marginTop: 64 }}>
+      {[
+        ['slides/', '真正的投影片內容。每個 deck 是一個 index.tsx。'],
+        ['themes/', '可重複使用的風格與版型素材。'],
+        ['assets/', '圖片、logo、截圖、字體等素材。'],
+        ['package.json', '記錄 npm scripts 與依賴。'],
+        ['open-slide.config.ts', '語言、資料夾、port 等設定。'],
+        ['.github/workflows', '自動 build 與部署設定。'],
+      ].map(([head, copy], i) => (
+        <Panel key={head} tone={i % 3 === 1 ? 'shell' : 'light'} style={{ minHeight: 210 }}>
+          <div style={{ fontSize: 32, fontWeight: 860, color: i % 3 === 2 ? colors.rose : colors.teal }}>{head}</div>
+          <p style={{ ...body, fontSize: 24, marginTop: 12 }}>{copy}</p>
+        </Panel>
+      ))}
+    </div>
+  </Frame>
+);
+
+const TemplateConcept: Page = () => (
+  <Frame n="09 / 20">
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 42, height: '100%', alignItems: 'center' }}>
+      <div>
+        <div style={eyebrow}>Template concept</div>
+        <h2 style={{ ...h2, marginTop: 30 }}>母版不是設計稿，是可複製的工作起點。</h2>
+        <p style={{ ...body, marginTop: 34 }}>它保留 scripts、workflow、常用頁型與 README。新簡報從母版複製，避免每次重新設定。</p>
+      </div>
+      <div style={{ display: 'grid', gap: 22 }}>
+        <Step num="1" head="複製母版" copy="Copy-Item deck-template 到 decks/new-deck。" />
+        <Step num="2" head="安裝依賴" copy="在新專案跑 npm.cmd install。" />
+        <Step num="3" head="改內容" copy="讓 Codex 修改 slides/getting-started/index.tsx。" />
+      </div>
+    </div>
+  </Frame>
+);
+
+const NewDeckFlow: Page = () => (
+  <Frame n="10 / 20" dark>
+    <div style={{ display: 'grid', gridTemplateColumns: '0.92fr 1.08fr', gap: 58, height: '100%', alignItems: 'center' }}>
+      <div>
+        <div style={{ ...eyebrow, color: colors.gold }}>New deck flow</div>
+        <h2 style={{ ...h2, color: colors.paper, marginTop: 30 }}>新簡報的固定開場指令。</h2>
+        <p style={{ ...body, color: '#d8d2bd', marginTop: 34 }}>這些指令完成複製、安裝、啟動預覽。後面就交給 Codex 依需求改內容。</p>
+      </div>
+      <CodeBlock>{`Copy-Item -Recurse deck-template decks\\2026-06-topic
+cd decks\\2026-06-topic
+npm.cmd install
+npm.cmd run dev`}</CodeBlock>
+    </div>
+  </Frame>
+);
+
+const Prompting: Page = () => (
+  <Frame n="11 / 20">
+    <div style={eyebrow}>Prompt as specification</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>給 Codex 的指令要像需求規格，而不是靈感句。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginTop: 68 }}>
+      <Panel tone="rose" style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 38, fontWeight: 860 }}>不夠好</div>
+        <p style={{ ...body, color: '#f4ead5', marginTop: 26 }}>幫我做一份簡報，漂亮一點，科技感，給資訊人員看。</p>
+      </Panel>
+      <Panel tone="teal" style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 38, fontWeight: 860 }}>比較好</div>
+        <p style={{ ...body, color: '#e8dfc8', marginTop: 26 }}>20 頁、主題是 open-slide + GitHub 管理流程、受眾 IT、要包含建檔概念、未來管理、踩雷案例。</p>
+      </Panel>
+    </div>
+  </Frame>
+);
+
+const EditLoop: Page = () => (
+  <Frame n="12 / 20">
+    <div style={eyebrow}>Edit loop</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>不是在網頁上直接改字，而是預覽後改原始碼。</h2>
+    <div style={{ display: 'grid', gap: 22, marginTop: 58 }}>
+      {[
+        ['1. localhost 預覽', '看版面、頁數、文字層級與是否溢出。'],
+        ['2. 用自然語言點名修改', '例如：第 7 頁縮短 GitHub 說明，改成三個步驟。'],
+        ['3. Codex 修改 index.tsx', '把需求落到 React component 與樣式。'],
+        ['4. build / push / deploy', '通過驗證後發布到 GitHub Pages。'],
+      ].map(([head, copy]) => (
+        <Panel key={head} style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: 28, alignItems: 'center' }}>
+          <div style={{ fontSize: 34, fontWeight: 860, color: colors.teal }}>{head}</div>
+          <p style={{ ...body, fontSize: 25 }}>{copy}</p>
+        </Panel>
+      ))}
+    </div>
+  </Frame>
+);
+
+const GitHubRepo: Page = () => (
+  <Frame n="13 / 20">
+    <div style={{ display: 'grid', gridTemplateColumns: '0.95fr 1.05fr', gap: 56, height: '100%', alignItems: 'center' }}>
+      <div>
+        <div style={eyebrow}>GitHub repo setup</div>
+        <h2 style={{ ...h2, marginTop: 30 }}>GitHub repo 建立時要保持空白。</h2>
+        <p style={{ ...body, marginTop: 34 }}>不要先勾 README、.gitignore、license。open-slide 專案已經有自己的檔案，避免第一次 push 發生衝突。</p>
+      </div>
+      <div style={{ display: 'grid', gap: 22 }}>
+        <Step num="1" head="Create repository" copy="建立與資料夾同名的 repo。" />
+        <Step num="2" head="No README" copy="不要讓 GitHub 先產生檔案。" />
+        <Step num="3" head="Push existing repo" copy="remote add origin 後推 main 分支。" />
+      </div>
+    </div>
+  </Frame>
+);
+
+const VersionFlow: Page = () => (
+  <Frame n="14 / 20" dark>
+    <div style={{ display: 'grid', gridTemplateColumns: '0.92fr 1.08fr', gap: 58, alignItems: 'center', height: '100%' }}>
+      <div>
+        <div style={{ ...eyebrow, color: colors.gold }}>Version flow</div>
+        <h2 style={{ ...h2, color: colors.paper, marginTop: 30 }}>Git 是簡報的版本時間軸。</h2>
+        <p style={{ ...body, color: '#d8d2bd', marginTop: 34 }}>每次完成一輪內容或修正，就 commit。發布則透過 push 觸發。</p>
+      </div>
+      <CodeBlock>{`git status
+git add .
+git commit -m "Update deck content"
+git push`}</CodeBlock>
+    </div>
+  </Frame>
+);
+
+const DeployChoices: Page = () => (
+  <Frame n="15 / 20">
+    <div style={eyebrow}>Deployment choices</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>發布平台要依資料敏感度選。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 26, marginTop: 70 }}>
+      {[
+        ['GitHub Pages', 'Public repo 最簡單。適合教學、公開分享、demo。'],
+        ['Vercel', '適合 private repo、快速 preview、專案型部署。'],
+        ['Netlify', '適合靜態站、團隊部署、簡易域名管理。'],
+      ].map(([head, copy], i) => (
+        <Panel key={head} tone={i === 0 ? 'teal' : i === 1 ? 'rose' : 'light'} style={{ minHeight: 390 }}>
+          <div style={{ fontSize: 40, fontWeight: 860 }}>{head}</div>
+          <p style={{ ...body, color: i === 0 ? '#e8dfc8' : i === 1 ? '#f4ead5' : colors.muted, marginTop: 26 }}>{copy}</p>
+        </Panel>
+      ))}
+    </div>
+  </Frame>
+);
+
+const PitfallNode: Page = () => (
+  <Frame n="16 / 20">
+    <div style={{ display: 'grid', gridTemplateColumns: '0.94fr 1.06fr', gap: 56, height: '100%', alignItems: 'center' }}>
+      <div>
+        <div style={eyebrow}>Pitfall 1</div>
+        <h2 style={{ ...h2, marginTop: 30 }}>Node 版本與 PowerShell npm 問題。</h2>
+        <p style={{ ...body, marginTop: 34 }}>一開始 Node v18.15.0 會噴 EBADENGINE。升到 Node v24 後，PowerShell 擋 npm.ps1，所以改用 npm.cmd。</p>
+      </div>
+      <CodeBlock>{`node -v
+v24.15.0
+
+npm.cmd -v
+11.12.1`}</CodeBlock>
+    </div>
+  </Frame>
+);
+
+const PitfallDrive: Page = () => (
+  <Frame n="17 / 20">
+    <div style={eyebrow}>Pitfall 2</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>T 槽 RaiDrive 不適合當 JS 開發根目錄。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginTop: 70 }}>
+      <Panel tone="rose" style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 38, fontWeight: 860 }}>錯誤現象</div>
+        <p style={{ ...body, color: '#f4ead5', marginTop: 26 }}>esbuild.exe EFTYPE、EPERM、Git dubious ownership。看起來像套件壞，其實是檔案系統特性不合。</p>
+      </Panel>
+      <Panel style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 38, fontWeight: 860, color: colors.teal }}>處理方式</div>
+        <p style={{ ...body, marginTop: 26 }}>把開發專案移到 C 槽 Codex 工作區；T 槽只保留輸出、筆記、封存檔。</p>
+      </Panel>
+    </div>
+  </Frame>
+);
+
+const PitfallAssets: Page = () => (
+  <Frame n="18 / 20">
+    <div style={{ display: 'grid', gridTemplateColumns: '0.95fr 1.05fr', gap: 56, height: '100%', alignItems: 'center' }}>
+      <div>
+        <div style={eyebrow}>Pitfall 3</div>
+        <h2 style={{ ...h2, marginTop: 30 }}>GitHub Pages 白畫面：asset path 少了 repo 名稱。</h2>
+        <p style={{ ...body, marginTop: 34 }}>open-slide build 出來是 /assets/...，但 project site 應該是 /repo-name/assets/...。</p>
+      </div>
+      <CodeBlock>{`錯：
+https://scarchi.github.io/assets/...
+
+對：
+https://scarchi.github.io/2026-05-first-open-slide/assets/...`}</CodeBlock>
+    </div>
+  </Frame>
+);
+
+const PitfallRoutes: Page = () => (
+  <Frame n="19 / 20">
+    <div style={eyebrow}>Pitfall 4</div>
+    <h2 style={{ ...h2, marginTop: 28 }}>404 有兩種：伺服器 404 與前端路由 404。</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginTop: 70 }}>
+      <Panel tone="rose" style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 38, fontWeight: 860 }}>伺服器 404</div>
+        <p style={{ ...body, color: '#f4ead5', marginTop: 26 }}>GitHub Pages 找不到 /s/getting-started 的實體檔案。解法是產生 fallback index.html。</p>
+      </Panel>
+      <Panel tone="teal" style={{ minHeight: 430 }}>
+        <div style={{ fontSize: 38, fontWeight: 860 }}>前端 404</div>
+        <p style={{ ...body, color: '#e8dfc8', marginTop: 26 }}>React Router 以為 base 是 /，所以需要把 /s/... 重寫成 /repo-name/s/...。</p>
+      </Panel>
+    </div>
+  </Frame>
+);
+
+const OperatingModel: Page = () => (
+  <Frame n="20 / 20" dark>
     <div style={{ height: '100%', display: 'grid', alignItems: 'center' }}>
       <div>
-        <div style={{ ...label, color: colors.gold }}>Final workflow</div>
-        <h2 style={{ ...heroTitle, color: colors.paper, marginTop: 34, maxWidth: 1320 }}>
-          最後我們得到的不是一份簡報，而是一條可重複的簡報生產線。
+        <div style={{ ...eyebrow, color: colors.gold }}>Recommended operating model</div>
+        <h2 style={{ ...h1, color: colors.paper, marginTop: 34, maxWidth: 1330 }}>
+          把簡報當作可部署、可版本管理、可重複生產的資訊交付物。
         </h2>
-        <div style={{ display: 'flex', gap: 18, marginTop: 56, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 56 }}>
           <Pill color={colors.gold}>本機開發</Pill>
-          <Pill color={colors.gold}>Codex 改稿</Pill>
-          <Pill color={colors.gold}>localhost 預覽</Pill>
-          <Pill color={colors.gold}>GitHub 版本</Pill>
-          <Pill color={colors.gold}>Pages 發布</Pill>
+          <Pill color={colors.gold}>母版開局</Pill>
+          <Pill color={colors.gold}>Codex 迭代</Pill>
+          <Pill color={colors.gold}>Git 版本</Pill>
+          <Pill color={colors.gold}>自動部署</Pill>
+          <Pill color={colors.gold}>Obsidian 整理</Pill>
         </div>
       </div>
     </div>
@@ -473,18 +649,28 @@ const Closing: Page = () => (
 );
 
 export const meta: SlideMeta = {
-  title: '小白如何請 Codex 教學做簡報',
+  title: 'open-slide 結合 GitHub 的簡報生產線',
 };
 
 export default [
   Cover,
-  StartPoint,
-  FolderPlan,
-  EnvironmentFix,
-  FirstPitfall,
-  WorkingProject,
-  GitHubFlow,
-  Publish,
-  Template,
-  Closing,
+  Agenda,
+  WhyChange,
+  Roles,
+  SystemMap,
+  LocalWorkspace,
+  FolderStructure,
+  ProjectAnatomy,
+  TemplateConcept,
+  NewDeckFlow,
+  Prompting,
+  EditLoop,
+  GitHubRepo,
+  VersionFlow,
+  DeployChoices,
+  PitfallNode,
+  PitfallDrive,
+  PitfallAssets,
+  PitfallRoutes,
+  OperatingModel,
 ] satisfies Page[];
